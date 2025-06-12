@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const BACKEND_URL = "https://swirls-backend.onrender.com";
 
@@ -46,8 +46,8 @@ function Register() {
             try {
                 const data = JSON.parse(responseText);
                 if (res.ok) {
-                    setMessage('Registration successful! Redirecting to login...');
-                    navigate('/login', { replace: true });
+                    setMessage('Registration successful! Please click the button below to login.');
+                    // Don't navigate automatically, show a button instead
                 } else {
                     const errorMsg = typeof data === 'string' ? data :
                         data.detail || data.message ||
@@ -119,6 +119,13 @@ function Register() {
                 />
                 <button type="submit" className="btn btn-primary w-100">Register</button>
             </form>
+            {message && message.includes('successful') && (
+                <div className="text-center mt-3">
+                    <Link to="/login" className="btn btn-success">
+                        Go to Login
+                    </Link>
+                </div>
+            )}
         </div>
     );
 }
