@@ -30,9 +30,13 @@ app.add_middleware(
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Get database URL from environment variable
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "mysql+mysqlconnector://root:Kartik05@localhost:3306/swirl_db")
-engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+# Database connection handling
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
+# Handle Render.com's postgres connection string
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
