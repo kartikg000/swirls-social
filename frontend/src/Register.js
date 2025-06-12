@@ -39,26 +39,22 @@ function Register() {
                 })
             });
 
-            // Log the raw response for debugging
             console.log('Response status:', res.status);
             const responseText = await res.text();
             console.log('Raw response:', responseText);
 
-            // Try to parse as JSON
             try {
                 const data = JSON.parse(responseText);
                 if (res.ok) {
-                    setMessage('Registration successful!');
-                    setTimeout(() => navigate('/login'), 1500);
+                    setMessage('Registration successful! Redirecting to login...');
+                    navigate('/login', { replace: true });
                 } else {
-                    // Handle error from backend
                     const errorMsg = typeof data === 'string' ? data :
                         data.detail || data.message ||
                         'Registration failed. Please try again.';
                     setMessage(errorMsg);
                 }
             } catch (parseError) {
-                // If response is not JSON, use text directly
                 setMessage(responseText || 'Unknown error occurred');
             }
         } catch (err) {
