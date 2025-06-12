@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const BACKEND_URL = "https://swirls-backend.onrender.com";
+
 function Login({ onLogin }) {
+    const navigate = useNavigate();
     const [form, setForm] = useState({ email: '', password: '' });
     const [message, setMessage] = useState('');
-    const navigate = useNavigate();
 
     const handleChange = e => {
         const { name, value } = e.target;
@@ -18,7 +20,13 @@ function Login({ onLogin }) {
         formData.append('email', form.email);
         formData.append('password', form.password);
         try {
-            const res = await fetch('/login', { method: 'POST', body: formData });
+            const res = await fetch(`${BACKEND_URL}/login`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
             const data = await res.json();
             if (data.error) {
                 setMessage(data.error);
@@ -27,7 +35,8 @@ function Login({ onLogin }) {
                 onLogin(data);
                 setTimeout(() => navigate('/profile'), 1000);
             }
-        } catch {
+        } catch (err) {
+            console.error('Login error:', err);
             setMessage('Server error during login');
         }
     };
