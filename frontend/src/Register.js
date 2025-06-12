@@ -23,45 +23,47 @@ function Register() {
         e.preventDefault();
         setMessage('Registering...');
 
-        const formData = {
-            email: form.email,
-            password: form.password,
-            name: form.name,
-            age: parseInt(form.age),
-            parent_email: form.parent_email
-        };
-
         try {
             const res = await fetch(`${BACKEND_URL}/register/child`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({
+                    email: form.email,
+                    password: form.password,
+                    name: form.name,
+                    age: parseInt(form.age),
+                    parent_email: form.parent_email
+                })
             });
 
-            const text = await res.text();
-            console.log('Raw server response:', text);
+            // Log the raw response for debugging
+            console.log('Response status:', res.status);
+            const responseText = await res.text();
+            console.log('Raw response:', responseText);
 
-            let data;
+            // Try to parse as JSON
             try {
-                data = JSON.parse(text);
-            } catch (e) {
-                setMessage(text);
-                return;
+                const data = JSON.parse(responseText);
+                if (res.ok) {
+                    setMessage('Registration successful!');
+                    setTimeout(() => navigate('/login'), 1500);
+                } else {
+                    // Handle error from backend
+                    const errorMsg = typeof data === 'string' ? data :
+                        data.detail || data.message ||
+                        'Registration failed. Please try again.';
+                    setMessage(errorMsg);
+                }
+            } catch (parseError) {
+                // If response is not JSON, use text directly
+                setMessage(responseText || 'Unknown error occurred');
             }
-
-            if (!res.ok) {
-                setMessage(data.detail || data.message || 'Registration failed');
-                return;
-            }
-
-            setMessage('Registration successful!');
-            setTimeout(() => navigate('/login'), 1500);
-
         } catch (err) {
-            setMessage('Server error during registration');
             console.error('Registration error:', err);
+            setMessage('Connection error. Please try again.');
         }
     };
 
@@ -69,7 +71,8 @@ function Register() {
         <div className="container" style={{ maxWidth: 400, margin: "40px auto" }}>
             <h2 className="form-title">Register</h2>
             {message && (
-                <div className={`alert ${message.includes('successful') ? 'alert-success' : 'alert-danger'}`}>
+                <div className={`alert ${message.includes('successful') ? 'alert-success' : 'alert-danger'}`}
+                    style={{ whiteSpace: 'pre-wrap' }}>
                     {message}
                 </div>
             )}
