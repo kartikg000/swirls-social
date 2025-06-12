@@ -6,3 +6,4 @@ mysql-connector-python==8.0.32
 sqlalchemy==2.0.9
 starlette==0.26.1
 python-jose==3.3.0
+python-dotenv==1.0.0

@@ -8,13 +8,20 @@ from passlib.context import CryptContext
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, Session
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000", "http://127.0.0.1:3001"
+        "http://localhost:3000", 
+        "http://localhost:3001", 
+        "http://127.0.0.1:3000", 
+        "http://127.0.0.1:3001",
+        "https://swirls-social.vercel.app"  # Add your Vercel URL here
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -23,8 +30,8 @@ app.add_middleware(
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# MySQL connection string (update with your credentials)
-SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:Kartik05@localhost:3306/swirl_db"
+# Get database URL from environment variable
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "mysql+mysqlconnector://root:Kartik05@localhost:3306/swirl_db")
 engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
