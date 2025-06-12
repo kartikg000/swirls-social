@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Homepage from './Homepage';
 import Profile from './Profile';
 import Posts from './Posts';
@@ -90,7 +90,6 @@ function HomeWithAuth({ user, setUser, onLogin, onRegisterComplete }) {
 function App() {
     const [user, setUser] = useState(null);
     const [theme, setTheme] = useState('dark');
-    const navigate = useNavigate ? useNavigate() : null;
 
     React.useEffect(() => {
         document.body.classList.toggle('light-theme', theme === 'light');
@@ -99,23 +98,20 @@ function App() {
 
     const handleLogin = (userData) => {
         setUser(userData);
-        if (navigate) navigate('/profile');
-        else window.location.href = '/profile';
     };
+
     const handleRegisterComplete = () => {
-        if (navigate) navigate('/login');
-        else window.location.href = '/login';
+        // Just show success message, the Register component will handle navigation
     };
 
     return (
-        <>
-            <ThemeToggle theme={theme} setTheme={setTheme} />
-            <SpaceBackground theme={theme} />
-            <SpaceIceCreamCone />
-            <div className="page-glass-transition">
+        <Router>
+            <div>
+                <ThemeToggle theme={theme} setTheme={setTheme} />
+                <SpaceBackground theme={theme} />
                 <Navbar user={user} setUser={setUser} />
                 <Routes>
-                    <Route path="/" element={<HomeWithAuth user={user} setUser={setUser} onLogin={handleLogin} onRegisterComplete={handleRegisterComplete} />} />
+                    <Route path="/" element={user ? <Navigate to="/profile" /> : <HomeWithAuth user={user} setUser={setUser} onLogin={handleLogin} onRegisterComplete={handleRegisterComplete} />} />
                     <Route path="/register" element={<Register onComplete={handleRegisterComplete} />} />
                     <Route path="/login" element={<Login onLogin={handleLogin} />} />
                     <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/login" />} />
@@ -123,14 +119,8 @@ function App() {
                     <Route path="/messages" element={user ? <Messages user={user} /> : <Navigate to="/login" />} />
                 </Routes>
             </div>
-        </>
-    );
-}
-
-export default function AppWithRouter() {
-    return (
-        <Router>
-            <App />
         </Router>
     );
 }
+
+export default App;
