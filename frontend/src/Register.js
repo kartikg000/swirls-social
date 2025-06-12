@@ -20,7 +20,7 @@ function Register() {
         if (shouldNavigate) {
             const timer = setTimeout(() => {
                 navigate('/login');
-            }, 2000); // Increased to 2 seconds to ensure visibility of success message
+            }, 2000);
             return () => clearTimeout(timer);
         }
     }, [shouldNavigate, navigate]);
@@ -36,14 +36,13 @@ function Register() {
         setIsSuccess(false);
         setShouldNavigate(false);
 
+        // Create FormData and append only the fields expected by the backend
         const formData = new FormData();
         formData.append('email', form.email);
         formData.append('password', form.password);
         formData.append('name', form.name);
         formData.append('age', form.age);
-        formData.append('parent_email', form.parent_email);
-
-        console.log('Sending registration request...');
+        // Note: parent_email will be used in a separate parent registration step
 
         try {
             const res = await fetch(`${BACKEND_URL}/register/child`, {
@@ -61,8 +60,12 @@ function Register() {
                 const data = JSON.parse(responseText);
                 if (res.ok) {
                     console.log('Registration successful:', data);
+                    // Store child_id for parent registration if needed
+                    localStorage.setItem('child_id', data.id);
+                    localStorage.setItem('parent_email', form.parent_email);
+
                     setIsSuccess(true);
-                    setMessage('Registration successful! You will be redirected to login in 2 seconds...');
+                    setMessage('Registration successful! Redirecting to login in 2 seconds...');
                     setShouldNavigate(true);
                 } else {
                     console.error('Registration failed:', data);
