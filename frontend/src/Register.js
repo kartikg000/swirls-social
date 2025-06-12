@@ -20,7 +20,7 @@ function Register() {
         if (shouldNavigate) {
             const timer = setTimeout(() => {
                 navigate('/login');
-            }, 100);
+            }, 2000); // Increased to 2 seconds to ensure visibility of success message
             return () => clearTimeout(timer);
         }
     }, [shouldNavigate, navigate]);
@@ -34,46 +34,51 @@ function Register() {
         e.preventDefault();
         setMessage('Registering...');
         setIsSuccess(false);
+        setShouldNavigate(false);
+
+        const formData = new FormData();
+        formData.append('email', form.email);
+        formData.append('password', form.password);
+        formData.append('name', form.name);
+        formData.append('age', form.age);
+        formData.append('parent_email', form.parent_email);
+
+        console.log('Sending registration request...');
 
         try {
             const res = await fetch(`${BACKEND_URL}/register/child`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: form.email,
-                    password: form.password,
-                    name: form.name,
-                    age: parseInt(form.age),
-                    parent_email: form.parent_email
-                })
+                body: formData
             });
 
             console.log('Response status:', res.status);
+            console.log('Response headers:', [...res.headers.entries()]);
+
             const responseText = await res.text();
             console.log('Raw response:', responseText);
 
             try {
                 const data = JSON.parse(responseText);
                 if (res.ok) {
+                    console.log('Registration successful:', data);
                     setIsSuccess(true);
-                    setMessage('Registration successful! Redirecting to login...');
+                    setMessage('Registration successful! You will be redirected to login in 2 seconds...');
                     setShouldNavigate(true);
                 } else {
+                    console.error('Registration failed:', data);
                     const errorMsg = typeof data === 'string' ? data :
-                        data.detail || data.message ||
-                        'Registration failed. Please try again.';
+                        data.detail?.[0]?.msg || data.detail || data.message ||
+                        'Registration failed. Please check your information and try again.';
                     setMessage(errorMsg);
                 }
             } catch (parseError) {
                 console.error('Parse error:', parseError);
-                setMessage(responseText || 'Unknown error occurred');
+                console.error('Raw response that failed to parse:', responseText);
+                setMessage(responseText || 'Server error occurred. Please try again.');
             }
         } catch (err) {
-            console.error('Registration error:', err);
-            setMessage('Connection error. Please try again.');
+            console.error('Network error:', err);
+            setMessage('Connection error. Please check your internet connection and try again.');
         }
     };
 
