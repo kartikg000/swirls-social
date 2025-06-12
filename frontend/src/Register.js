@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const BACKEND_URL = "https://swirls-backend.onrender.com";
 
@@ -14,6 +14,16 @@ function Register() {
     });
     const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
+    const [shouldNavigate, setShouldNavigate] = useState(false);
+
+    React.useEffect(() => {
+        if (shouldNavigate) {
+            const timer = setTimeout(() => {
+                navigate('/login');
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [shouldNavigate, navigate]);
 
     const handleChange = e => {
         const { name, value } = e.target;
@@ -49,7 +59,8 @@ function Register() {
                 const data = JSON.parse(responseText);
                 if (res.ok) {
                     setIsSuccess(true);
-                    setMessage('Registration successful! Please click the button below to login.');
+                    setMessage('Registration successful! Redirecting to login...');
+                    setShouldNavigate(true);
                 } else {
                     const errorMsg = typeof data === 'string' ? data :
                         data.detail || data.message ||
@@ -64,10 +75,6 @@ function Register() {
             console.error('Registration error:', err);
             setMessage('Connection error. Please try again.');
         }
-    };
-
-    const handleLoginClick = () => {
-        navigate('/login', { replace: true });
     };
 
     return (
@@ -90,6 +97,7 @@ function Register() {
                             placeholder="Email"
                             required
                             className="form-control"
+                            disabled={isSuccess}
                         />
                     </div>
                     <div className="mb-3">
@@ -101,6 +109,7 @@ function Register() {
                             placeholder="Password"
                             required
                             className="form-control"
+                            disabled={isSuccess}
                         />
                     </div>
                     <div className="mb-3">
@@ -111,6 +120,7 @@ function Register() {
                             placeholder="Name"
                             required
                             className="form-control"
+                            disabled={isSuccess}
                         />
                     </div>
                     <div className="mb-3">
@@ -122,6 +132,7 @@ function Register() {
                             placeholder="Age"
                             required
                             className="form-control"
+                            disabled={isSuccess}
                         />
                     </div>
                     <div className="mb-3">
@@ -133,19 +144,17 @@ function Register() {
                             placeholder="Parent's Email"
                             required
                             className="form-control"
+                            disabled={isSuccess}
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary w-100" disabled={isSuccess}>
-                        Register
+                    <button
+                        type="submit"
+                        className="btn btn-primary w-100"
+                        disabled={isSuccess}
+                    >
+                        {isSuccess ? 'Registration Successful' : 'Register'}
                     </button>
                 </form>
-                {isSuccess && (
-                    <div className="text-center mt-3">
-                        <button onClick={handleLoginClick} className="btn btn-success">
-                            Go to Login
-                        </button>
-                    </div>
-                )}
             </div>
         </div>
     );
