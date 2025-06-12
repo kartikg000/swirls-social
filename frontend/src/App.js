@@ -71,18 +71,9 @@ function Navbar({ user, setUser }) {
 }
 
 function HomeWithAuth({ user, setUser, onLogin, onRegisterComplete }) {
-    // Show homepage, login, and register on the homepage
     return (
         <div className="container" style={{ marginTop: 40 }}>
             <Homepage />
-            <div className="row mt-4">
-                <div className="col-md-6">
-                    <Login onLogin={onLogin} />
-                </div>
-                <div className="col-md-6">
-                    <Register onComplete={onRegisterComplete} />
-                </div>
-            </div>
         </div>
     );
 }
