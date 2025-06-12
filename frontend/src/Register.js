@@ -64,68 +64,80 @@ function Register() {
     };
 
     return (
-        <div className="container" style={{ maxWidth: 400, margin: "40px auto" }}>
-            <h2 className="form-title">Register</h2>
-            {message && (
-                <div className={`alert ${message.includes('successful') ? 'alert-success' : 'alert-danger'}`}
-                    style={{ whiteSpace: 'pre-wrap' }}>
-                    {message}
-                </div>
-            )}
-            <form onSubmit={handleSubmit}>
-                <input
-                    name="email"
-                    type="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    placeholder="Email"
-                    required
-                    className="form-control mb-2"
-                />
-                <input
-                    name="password"
-                    type="password"
-                    value={form.password}
-                    onChange={handleChange}
-                    placeholder="Password"
-                    required
-                    className="form-control mb-2"
-                />
-                <input
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    placeholder="Name"
-                    required
-                    className="form-control mb-2"
-                />
-                <input
-                    name="age"
-                    type="number"
-                    value={form.age}
-                    onChange={handleChange}
-                    placeholder="Age"
-                    required
-                    className="form-control mb-2"
-                />
-                <input
-                    name="parent_email"
-                    type="email"
-                    value={form.parent_email}
-                    onChange={handleChange}
-                    placeholder="Parent's Email"
-                    required
-                    className="form-control mb-2"
-                />
-                <button type="submit" className="btn btn-primary w-100">Register</button>
-            </form>
-            {message && message.includes('successful') && (
-                <div className="text-center mt-3">
-                    <Link to="/login" className="btn btn-success">
-                        Go to Login
-                    </Link>
-                </div>
-            )}
+        <div className="auth-container">
+            <div className="container p-4" style={{ maxWidth: 400, margin: "40px auto" }}>
+                <h2 className="text-center mb-4">Register</h2>
+                {message && (
+                    <div className={`alert ${message.includes('successful') ? 'alert-success' : 'alert-danger'} mb-3`}
+                        style={{ whiteSpace: 'pre-wrap' }}>
+                        {message}
+                    </div>
+                )}
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                        <input
+                            name="email"
+                            type="email"
+                            value={form.email}
+                            onChange={handleChange}
+                            placeholder="Email"
+                            required
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <input
+                            name="password"
+                            type="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            placeholder="Password"
+                            required
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <input
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            placeholder="Name"
+                            required
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <input
+                            name="age"
+                            type="number"
+                            value={form.age}
+                            onChange={handleChange}
+                            placeholder="Age"
+                            required
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <input
+                            name="parent_email"
+                            type="email"
+                            value={form.parent_email}
+                            onChange={handleChange}
+                            placeholder="Parent's Email"
+                            required
+                            className="form-control"
+                        />
+                    </div>
+                    <button type="submit" className="btn btn-primary w-100">Register</button>
+                </form>
+                {message && message.includes('successful') && (
+                    <div className="text-center mt-3">
+                        <Link to="/login" className="btn btn-success">
+                            Go to Login
+                        </Link>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
