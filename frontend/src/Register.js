@@ -23,53 +23,56 @@ function Register() {
         e.preventDefault();
         setMessage('Registering...');
 
-        // Convert age to number and prepare data
         const formData = {
-            ...form,
-            age: parseInt(form.age)
+            email: form.email,
+            password: form.password,
+            name: form.name,
+            age: parseInt(form.age),
+            parent_email: form.parent_email
         };
 
         try {
-            console.log('Sending registration data:', formData); // Debug log
             const res = await fetch(`${BACKEND_URL}/register/child`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                credentials: 'include',
                 body: JSON.stringify(formData)
             });
 
-            console.log('Response status:', res.status); // Debug log
+            const text = await res.text();
+            console.log('Raw server response:', text);
 
-            // Handle non-JSON responses
-            const contentType = res.headers.get("content-type");
-            if (!contentType || !contentType.includes("application/json")) {
-                const text = await res.text();
-                console.log('Non-JSON response:', text); // Debug log
-                throw new Error(`Server returned ${res.status}: ${text}`);
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                setMessage(text);
+                return;
             }
 
-            const data = await res.json();
-            console.log('Registration response:', data); // Debug log
-
             if (!res.ok) {
-                throw new Error(data.detail || 'Registration failed');
+                setMessage(data.detail || data.message || 'Registration failed');
+                return;
             }
 
             setMessage('Registration successful!');
-            setTimeout(() => navigate('/login'), 1000);
+            setTimeout(() => navigate('/login'), 1500);
+
         } catch (err) {
+            setMessage('Server error during registration');
             console.error('Registration error:', err);
-            setMessage(err.message || 'Server error during registration');
         }
     };
 
     return (
         <div className="container" style={{ maxWidth: 400, margin: "40px auto" }}>
             <h2 className="form-title">Register</h2>
-            {message && <div className="alert alert-info">{message}</div>}
+            {message && (
+                <div className={`alert ${message.includes('successful') ? 'alert-success' : 'alert-danger'}`}>
+                    {message}
+                </div>
+            )}
             <form onSubmit={handleSubmit}>
                 <input
                     name="email"
