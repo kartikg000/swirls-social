@@ -284,3 +284,55 @@ body.light-theme .theme-toggle-btn {
     background: rgba(255, 255, 255, 0.7);
     color: #22304a;
 }
+
+/* Auth pages specific styles */
+.auth-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-container .container {
+    background: rgba(20, 30, 60, 0.75);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.light-theme .auth-container .container {
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.auth-container h2 {
+    color: #b3e0ff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+body.light-theme .auth-container h2 {
+    color: #1e2a4a;
+    text-shadow: none;
+}
+
+.auth-container .form-control {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff !important;
+}
+
+body.light-theme .auth-container .form-control {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #1e2a4a !important;
+}
+
+.auth-container .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+body.light-theme .auth-container .form-control::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
