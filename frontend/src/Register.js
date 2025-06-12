@@ -13,6 +13,7 @@ function Register() {
         parent_email: ''
     });
     const [message, setMessage] = useState('');
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const handleChange = e => {
         const { name, value } = e.target;
@@ -22,6 +23,7 @@ function Register() {
     const handleSubmit = async e => {
         e.preventDefault();
         setMessage('Registering...');
+        setIsSuccess(false);
 
         try {
             const res = await fetch(`${BACKEND_URL}/register/child`, {
@@ -46,8 +48,8 @@ function Register() {
             try {
                 const data = JSON.parse(responseText);
                 if (res.ok) {
+                    setIsSuccess(true);
                     setMessage('Registration successful! Please click the button below to login.');
-                    // Don't navigate automatically, show a button instead
                 } else {
                     const errorMsg = typeof data === 'string' ? data :
                         data.detail || data.message ||
@@ -55,6 +57,7 @@ function Register() {
                     setMessage(errorMsg);
                 }
             } catch (parseError) {
+                console.error('Parse error:', parseError);
                 setMessage(responseText || 'Unknown error occurred');
             }
         } catch (err) {
@@ -63,12 +66,16 @@ function Register() {
         }
     };
 
+    const handleLoginClick = () => {
+        navigate('/login', { replace: true });
+    };
+
     return (
         <div className="auth-container">
             <div className="container p-4" style={{ maxWidth: 400, margin: "40px auto" }}>
                 <h2 className="text-center mb-4">Register</h2>
                 {message && (
-                    <div className={`alert ${message.includes('successful') ? 'alert-success' : 'alert-danger'} mb-3`}
+                    <div className={`alert ${isSuccess ? 'alert-success' : 'alert-danger'} mb-3`}
                         style={{ whiteSpace: 'pre-wrap' }}>
                         {message}
                     </div>
@@ -128,13 +135,15 @@ function Register() {
                             className="form-control"
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary w-100">Register</button>
+                    <button type="submit" className="btn btn-primary w-100" disabled={isSuccess}>
+                        Register
+                    </button>
                 </form>
-                {message && message.includes('successful') && (
+                {isSuccess && (
                     <div className="text-center mt-3">
-                        <Link to="/login" className="btn btn-success">
+                        <button onClick={handleLoginClick} className="btn btn-success">
                             Go to Login
-                        </Link>
+                        </button>
                     </div>
                 )}
             </div>
